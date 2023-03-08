@@ -1,0 +1,44 @@
+# Must have .env file configured
+
+version: "3.8"
+services:
+    mqtt:
+        restart: unless-stopped
+        build:
+            context: ./mqtt_broker/${mqtt_auth_mode}
+            dockerfile: ./Dockerfile
+        volumes:
+            - ./logs/mqtt_broker:/app/logs/mqtt_broker
+        ports:
+            - "1883:1883"
+            - "8883:8883"
+    web_proxy:
+        restart: unless-stopped
+        build:
+            context: ./web_proxy/${deployment_mode}
+            dockerfile: ./Dockerfile
+        volumes:
+            - ./web_proxy/PUBLIC/html:/app/html
+            - ./logs/web_proxy:/var/log/nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        depends_on:
+            - session_manager
+
+    session_manager:
+        environment:
+            - DEPLOYMENT_MODE=${deployment_mode}
+            - MQTT_AUTH_MODE=${mqtt_auth_mode}
+            - APP_AUTH_MODE=${app_auth_mode}
+            - FILE_LOGGING=True
+        restart: unless-stopped
+        build:
+            context: ../session_manager
+            dockerfile: ../session_manager/Dockerfile
+
+        volumes:
+            - ./certs/local_mqtt_keys:/app/local_mqtt_keys # This is only needed for dev_jwt_auth
+            - ./logs/session_manager:/app/logs
+        ports:
+            - "4444:4444" # Session Manager admin port can be restricted by hosting environment

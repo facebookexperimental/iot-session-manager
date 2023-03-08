@@ -1,0 +1,10 @@
+
+pytest
+tornado
+
+# Needed for dev_jwt_auth
+pyjwt
+cryptography
+
+# Needed for prod
+boto3
