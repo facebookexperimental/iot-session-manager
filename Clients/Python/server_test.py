@@ -22,7 +22,7 @@ logger = logging.getLogger()
 
 # Configure the Session Manager Admin client IP and Port and generate instance
 session_mgr_config = {
-    "server_url": 'localhost:4444'
+    "server_url": 'localhost:50000'
 }
 admin_client = SessionManagerClient(session_mgr_config)
 
@@ -33,7 +33,7 @@ logger.info(f'CREATING SESSION RESULT: {session_data}')
 
 # Configure iot_client class with IP and port of the auth url and mqtt broker
 config = {
-    "auth_url": 'localhost:80/api/joinSession',
+    "auth_url": 'localhost:88/api/joinSession',
     "broker_ip": 'localhost',
     "broker_port": 1883,
     "client_id": "servertestclient1"

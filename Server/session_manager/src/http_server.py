@@ -152,11 +152,16 @@ async def start_iot_async_server():
 """
 class JoinSessionHandler(tornado.web.RequestHandler):
     def post(self):
-        data = json.loads(self.request.body)
-        session_id = data.get('id')
-        session_pin = data.get('pin')
-        client = data.get('client')
-        token = manager.join_session(session_id, session_pin, client)
-        logger.info(f"Client {client} Joining Session: {session_id}")
-        response = {"token":token}
-        self.write(json.dumps(response))
+        try:
+            data = json.loads(self.request.body)
+            session_id = data.get('id')
+            session_pin = data.get('pin')
+            client = data.get('client')
+            token = manager.join_session(session_id, session_pin, client)
+            logger.info(f"Client {client} Joining Session: {session_id}")
+            response = {"token":token}
+            self.write(json.dumps(response))
+        except Exception:
+            logger.info(f'Error decoding request body:')
+            logger.info(self.request.body)
+            self.write(json.dumps('Error decoding request body:'))

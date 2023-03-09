@@ -21,7 +21,7 @@ services:
             - ./web_proxy/PUBLIC/html:/app/html
             - ./logs/web_proxy:/var/log/nginx
         ports:
-            - "80:80"
+            - "88:80"
             - "443:443"
         depends_on:
             - session_manager
@@ -41,4 +41,4 @@ services:
             - ./certs/local_mqtt_keys:/app/local_mqtt_keys # This is only needed for dev_jwt_auth
             - ./logs/session_manager:/app/logs
         ports:
-            - "4444:4444" # Session Manager admin port can be restricted by hosting environment
+            - "50000:50000" # Session Manager admin port can be restricted by hosting environment
