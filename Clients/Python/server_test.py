@@ -55,16 +55,20 @@ for timeout in range(20):
 def test_callback(payload):
     logger.info(f'Test Callback Recieved Message with payload {payload}')
 
-def test_callback_2(payload):
-    logger.info(f'Test Callback Recieved Message with payload {payload}')
+# Simple function to get command line input to publish a message
+def test_publish_input():
+    print("Test Publishing Messages:")
+    print("Enter Topic:")
+    topic = input()
+    print("Enter Payload:")
+    payload = input()
+    iot_client.publish(topic, payload)
 
 if iot_client.connected:
     iot_client.topic_subscribe("test_topic", test_callback)
-    iot_client.topic_subscribe("test_topic_2", test_callback_2)
     iot_client.publish("test_topic", "test_payload")
     while True:
-        logger.info('IoT Client Listening')
-        iot_client.publish("test_topic_2", "ping")
-        time.sleep(10)
+        time.sleep(0.5)
+        test_publish_input()
 else:
     logger.info('Error: Client timed out while connecting')
