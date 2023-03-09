@@ -24,6 +24,7 @@ class IotClient():
         self.token = ''
         self.config = config
         self.connected = False
+        self.subscriptions = {}
         self._client_id = config.get('client_id')
         self._client = mqtt.Client(client_id="", transport="TCP")
         self._client.on_connect = self._on_connect
@@ -34,6 +35,13 @@ class IotClient():
 
     def _on_message(self, client, userdata, msg):
         logger.info(f"Message Recieved: Topic: {msg.topic}, payload: {msg.payload}")
+        short_topic = msg.topic.split('/')[2]
+        handlerList = self.subscriptions.get(short_topic)
+        if handlerList:
+            for handler in handlerList:
+                handler(msg.payload)
+        else:
+            logger.info(f"No handlers found for {msg.topic}")
 
     def _on_connect(self, client, userdata, flags, rc):
         logger.info("Connected to MQTT")
@@ -47,7 +55,7 @@ class IotClient():
         logger.info({"publishing": None, "published_rc": rc})
         pass
 
-    def connect(self,session_id: int, session_pin: int):
+    def join_session(self,session_id: int, session_pin: int):
         logger.info(f'Attempting to connect with {session_id} and {session_pin}')
         self.session_id = session_id
         body_data = {
@@ -66,8 +74,14 @@ class IotClient():
             logger.info(f"ERROR IOT CONNECTION: {response.content}")
 
 
-    def subscribe(self, topic: str, qos=0):
+    def topic_subscribe(self, topic: str, callback, qos=0):
         self._client.subscribe(f'/{self.session_id}/{topic}', qos)
+        handlerList = self.subscriptions.get(topic)
+        if handlerList:
+            handlerList.append(callback)
+        else:
+            handlerList = [callback]
+        self.subscriptions[topic] = handlerList
 
     def publish(self, topic: str, payload:str):
         self._client.publish(f'/{self.session_id}/{topic}',payload)

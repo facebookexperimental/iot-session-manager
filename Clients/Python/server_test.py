@@ -42,7 +42,7 @@ iot_client = IotClient(config)
 
 # Connect the IoT client to the MQTT Broker
 logger.info(f'IOT CONNECT Start: {session_data}')
-iot_client.connect(session_data["id"], session_data["pin"])
+iot_client.join_session(session_data["id"], session_data["pin"])
 
 # Wait for connection or timeout in 10s
 for timeout in range(20):
@@ -52,11 +52,19 @@ for timeout in range(20):
 
 # If client is connected subscribe and publish to a test topic, the message should
 # appear in the logs
+def test_callback(payload):
+    logger.info(f'Test Callback Recieved Message with payload {payload}')
+
+def test_callback_2(payload):
+    logger.info(f'Test Callback Recieved Message with payload {payload}')
+
 if iot_client.connected:
-    iot_client.subscribe("test_topic")
+    iot_client.topic_subscribe("test_topic", test_callback)
+    iot_client.topic_subscribe("test_topic_2", test_callback_2)
     iot_client.publish("test_topic", "test_payload")
     while True:
         logger.info('IoT Client Listening')
+        iot_client.publish("test_topic_2", "ping")
         time.sleep(10)
 else:
     logger.info('Error: Client timed out while connecting')
