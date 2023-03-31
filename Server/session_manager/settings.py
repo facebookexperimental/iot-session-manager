@@ -47,15 +47,19 @@ SESSION_STORAGE = 'session_data.json'
 
 
 # MQTT JWT authentication setup
-JWT_MODE = os.environ.get('MQTT_AUTH_MODE')  # Provided from docker compose from .env file - dev_no_auth, dev_jwt_auth, aws_jwt_auth
+JWT_MODE = os.environ.get('MQTT_AUTH_MODE')  # Provided from docker compose from .env file - dev_no_auth, dev_jwt_auth, kms_jwt_auth
 
 # If no environmental variable is set, no authentication will be used
 if not JWT_MODE:
     JWT_MODE = 'dev_no_auth'
-
-# For dev_jwt_auth, a local pair of private and public keys are necessary. The location of those keys is set below:
-JWT_PRIVATE_KEY_LOC = './local_mqtt_keys/private_key.pem'
-JWT_PUBLIC_KEY_LOC = './local_mqtt_keys/public_key.pem'
+    JWT_PRIVATE_KEY_LOC = ''
+    JWT_PUBLIC_KEY_LOC = ''
+elif JWT_MODE == 'dev_jwt_auth':
+    # For dev_jwt_auth, a local pair of private and public keys are necessary. The location of those keys is set below:
+    JWT_PRIVATE_KEY_LOC = './local_mqtt_keys/private_key.pem'
+    JWT_PUBLIC_KEY_LOC = './local_mqtt_keys/public_key.pem'
+elif JWT_MODE == 'kms_jwt_auth':
+    AWS_JWT_KEY_ARN = os.environ.get('AWS_KMS_ARN')
 
 
 # Conductor Interfaces - map the Conudctor class to a type name in the dictionary below

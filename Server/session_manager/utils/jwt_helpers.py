@@ -8,10 +8,10 @@ import logging
 import math
 import time
 from datetime import timedelta
-
 import jwt
 
-from settings import JWT_MODE, JWT_PRIVATE_KEY_LOC, JWT_PUBLIC_KEY_LOC
+import settings
+
 from utils.boto3_helpers import kms_jwt_sign
 
 logger = logging.getLogger()
@@ -29,7 +29,7 @@ The tokens vary depending on the deployment mode of the application:
         - there are no real tokens and a placeholder is given of the format 'client_id:session_id'
 - dev_jwt_auth
         - local RSA keys are used to sign and generate tokens via the py_jwt library.
-- prod_jwt_auth
+- kms_jwt_auth
         - the AWS KMS service is used to store a private key and sign the token.
         - The boto3_helpers file handles this implementation.
 """
@@ -49,11 +49,11 @@ def create_session_token_payload(session_id, client_id):
 # Create session token based on the mode set from settings and environment variables during deployment
 def create_session_token(session_id, client_id):
     acl_payload = create_session_token_payload(session_id, client_id)
-    if JWT_MODE == 'dev_jwt_auth':
+    if settings.JWT_MODE == 'dev_jwt_auth':
         return py_jwt_sign(acl_payload)
-    elif JWT_MODE == 'dev_no_auth':
+    elif settings.JWT_MODE == 'dev_no_auth':
         return f'{client_id}:{session_id}'
-    elif JWT_MODE == 'prod_jwt_auth':
+    elif settings.JWT_MODE == 'kms_jwt_auth':
         return kms_jwt_sign(acl_payload)
 
 """
@@ -61,7 +61,7 @@ PyJWT token methods for dev_jwt_auth
 """
 
 def py_jwt_sign(acl_payload):
-    with open(JWT_PRIVATE_KEY_LOC, 'rb') as privatefile:
+    with open(settings.JWT_PRIVATE_KEY_LOC, 'rb') as privatefile:
         private_key = privatefile.read()
     return jwt.encode(acl_payload, private_key, algorithm="RS256")
 
@@ -78,5 +78,5 @@ def py_jwt_verify(token):
 
 
 def get_public_key():
-    with open(JWT_PUBLIC_KEY_LOC , 'rb') as publicfile:
+    with open(settings.JWT_PUBLIC_KEY_LOC , 'rb') as publicfile:
         return publicfile.read()

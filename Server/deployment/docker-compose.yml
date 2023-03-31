@@ -31,6 +31,7 @@ services:
             - DEPLOYMENT_MODE=${deployment_mode}
             - MQTT_AUTH_MODE=${mqtt_auth_mode}
             - APP_AUTH_MODE=${app_auth_mode}
+            - AWS_KMS_ARN=${aws_kms_arn}
             - FILE_LOGGING=True
         restart: unless-stopped
         build:

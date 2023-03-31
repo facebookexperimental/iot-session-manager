@@ -9,7 +9,7 @@ import logging
 
 import boto3
 
-from settings import JWT_PRIVATE_KEY_LOC
+import settings
 
 logger = logging.getLogger()
 
