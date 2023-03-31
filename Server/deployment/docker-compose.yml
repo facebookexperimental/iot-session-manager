@@ -21,7 +21,7 @@ services:
             - ./web_proxy/PUBLIC/html:/app/html
             - ./logs/web_proxy:/var/log/nginx
         ports:
-            - "88:80"
+            - "80:80"
             - "443:443"
         depends_on:
             - session_manager

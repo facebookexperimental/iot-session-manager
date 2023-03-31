@@ -34,7 +34,7 @@ Option 2 is a simpler solution so is seen below.
 '''
 
 pkcs1_string = pubkey_string[32:]
-rsa_key = '-----BEGIN RSA PUBLIC KEY-----' + pkcs1_string +'-----END RSA PUBLIC KEY-----'
+rsa_key = '-----BEGIN RSA PUBLIC KEY-----\n' + pkcs1_string +'\n-----END RSA PUBLIC KEY-----'
 print(rsa_key)
 with open("rsa_pub_key.pem", "w") as outfile:
     outfile.write(rsa_key)
