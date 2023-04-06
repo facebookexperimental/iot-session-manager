@@ -14,9 +14,6 @@ COPY ./rsa_pub_key.der ./rsa_pub_key.der
 # Copy JWT_Mosquitto_Auth pre-built release
 COPY ./libmosquitto_jwt_auth.so ./libmosquitto_jwt_auth.so
 
-# Copy SSL certs into container
-COPY ../../certs/prod_ssl ./ssl-certs
-
 COPY ./mosquitto.conf ./mosquitto.conf
 
 CMD sudo mosquitto -c mosquitto.conf

@@ -59,8 +59,12 @@ elif JWT_MODE == 'dev_jwt_auth':
     JWT_PRIVATE_KEY_LOC = './local_mqtt_keys/private_key.pem'
     JWT_PUBLIC_KEY_LOC = './local_mqtt_keys/public_key.pem'
 elif JWT_MODE == 'kms_jwt_auth':
-    AWS_JWT_KEY_ARN = os.environ.get('AWS_KMS_ARN')
+    with open('mqtt_pub_key_info.json', 'rb') as pubdata:
+        public_key_data = pubdata.read()
+        pub_dict = json.loads(public_key_data)
+        AWS_JWT_KEY_ARN = pub_dict["KeyId"]
 
+AWS_REGION = os.environ.get("AWS_REGION")
 
 # Conductor Interfaces - map the Conudctor class to a type name in the dictionary below
 from src.conductor.default_conductor import DefaultConductor

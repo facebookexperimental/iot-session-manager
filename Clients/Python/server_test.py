@@ -6,6 +6,7 @@
 
 import logging
 import time
+import json
 
 from src.iot_client import IotClient
 from src.session_manager_client import SessionManagerClient
@@ -17,12 +18,16 @@ This script utilizes an Admin client and IoT client to test the server functiona
 The script creates a session as an admin, and then an IoT client joins that session and
 publishes a test message to verify the network is working.
 """
+with open('config.json', 'rb') as config_file:
+    config_data = config_file.read()
+    config = json.loads(config_data)
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 # Configure the Session Manager Admin client IP and Port and generate instance
 session_mgr_config = {
-    "server_url": 'localhost:50000'
+    "server_url": config.get('server_url')
 }
 admin_client = SessionManagerClient(session_mgr_config)
 
@@ -32,12 +37,6 @@ session_data = admin_client.create_session()
 logger.info(f'CREATING SESSION RESULT: {session_data}')
 
 # Configure iot_client class with IP and port of the auth url and mqtt broker
-config = {
-    "auth_url": 'localhost:88/api/joinSession',
-    "broker_ip": 'localhost',
-    "broker_port": 1883,
-    "client_id": "servertestclient1"
-}
 iot_client = IotClient(config)
 
 # Connect the IoT client to the MQTT Broker

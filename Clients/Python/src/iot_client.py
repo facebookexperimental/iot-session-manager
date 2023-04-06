@@ -63,11 +63,11 @@ class IotClient():
             "pin":session_pin,
             "client": self._client_id
         }
-        response = requests.post(f'http://{self.config["auth_url"]}',json=body_data)
+        response = requests.post(f'https://{self.config["auth_url"]}',json=body_data)
         try:
             data = response.json()
             logger.info(f"Recieved token {data['token']}")
-            self._client.username_pw_set(username=session_id, password=data["token"])
+            self._client.username_pw_set(username=self._client_id, password=data["token"])
             self._client.connect(self.config["broker_ip"], self.config["broker_port"])
             self._client.loop_start()
         except:

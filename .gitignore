@@ -3,4 +3,5 @@ __pycache__
 *.der
 *.log
 *.so
-*.json
+session_data.json
+config.json

@@ -26,7 +26,7 @@ def kms_jwt_sign(payload):
     }
     message = f'{token_components.get("header")}.{token_components.get("payload")}'
     logger.info('[KMS] Starting KMS JWT Signing')
-    client = boto3.client('kms')
+    client = boto3.client('kms', region_name=settings.AWS_REGION)
     response = client.sign(
         KeyId = settings.AWS_JWT_KEY_ARN,
         Message = message.encode(),#Base64 encoded binary data object
@@ -40,7 +40,7 @@ def kms_jwt_sign(payload):
 
 def kms_verify_token(token):
     logger.info('[KMS] Verifying Token')
-    client = boto3.client('kms')
+    client = boto3.client('kms', region_name=settings.AWS_REGION)
     message = f"{token.split('.')[0]}.{token.split('.')[1]}"
     signature_string = token.split('.')[2]+'='
     signature = base64.urlsafe_b64decode(signature_string)
