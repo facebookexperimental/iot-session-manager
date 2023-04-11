@@ -15,10 +15,11 @@ class Session():
         self.id = id
         self.pin = pin
         self.type = session_type
-        self.conductor = CONDUCTOR_INTERFACES[session_type](self.id)
+        self.clients = []
+        self.conductor = CONDUCTOR_INTERFACES[session_type](self)
 
     def encode(self):
-        return {"id":self.id, "pin":self.pin,"type":self.type}
+        return {"id":self.id, "pin":self.pin,"type":self.type,"clients":self.clients}
 
     def conductor_request(self, method, params):
         return self.conductor.request(method, params)

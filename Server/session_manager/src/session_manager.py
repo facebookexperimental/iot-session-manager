@@ -10,6 +10,7 @@ from random import randint
 from src.session import Session
 from settings import ID_SIZE, PIN_SIZE, SESSION_STORAGE
 from utils.jwt_helpers import create_session_token
+from utils.storage import load_sessions, save_sessions
 
 logger = logging.getLogger()
 
@@ -46,7 +47,7 @@ class SessionManager():
         )
         self.sessions[new_session.id] = new_session
         logger.info(f"Creating Session: {new_session.id}")
-        self._save_sessions()
+        save_sessions(self.sessions)
         return new_session
 
     # Close a session from a session id -> returns boolean
@@ -54,7 +55,7 @@ class SessionManager():
         try:
             del self.sessions[session_id]
             logger.info(f"Deleting session {session_id}")
-            self._save_sessions()
+            save_sessions(self.sessions)
             return True
         except:
             logger.info("Can't close session, session not found")
@@ -73,6 +74,7 @@ class SessionManager():
         result = self._validate_session_pin(session_id, session_pin)
         if result:
             logger.info(f"Creating Session Token for client: {client_id} and session {session_id}")
+            self._add_client_to_session(session_id, client_id)
             return create_session_token(session_id, client_id)
         else:
             logger.info(f"Could not validate credentials for client: {client_id} and session {session_id}")
@@ -84,7 +86,7 @@ class SessionManager():
     def load_sessions(self, data=None):
         if not data:
             logger.info("Session Manager loading sessions from file")
-            session_data = self._load_from_file()
+            session_data = load_sessions()
         else:
             logger.info("Session Manager loading sessions from data")
             session_data = data
@@ -99,24 +101,6 @@ class SessionManager():
     '''
     Internal Class Helpers
     '''
-    def _load_from_file(self)->dict:
-        try:
-            with open(SESSION_STORAGE, "w+") as readfile:
-                txt = readfile.read()
-
-            return json.loads(txt)
-        except Exception:
-            return {}
-
-    def _save_sessions(self)->bool:
-        data = json.dumps(self.sessions, default=lambda o: o.encode(), indent=4)
-        try:
-            with open(SESSION_STORAGE, "w+") as outfile:
-                outfile.write(data)
-                return True
-        except Exception:
-            logger.warn('Could not save sessions to file')
-            return False
 
     def _get_session_from_id(self, id:str)->Session:
         return self.sessions.get(id)
@@ -145,3 +129,9 @@ class SessionManager():
         else:
             logger.info("Could not locate session with that id")
             return False
+
+    def _add_client_to_session(self, session_id: str, client_id: str)->None:
+        session = self._get_session_from_id(session_id)
+        if client_id not in session.clients:
+            session.clients.append(client_id)
+            save_sessions(self.sessions)

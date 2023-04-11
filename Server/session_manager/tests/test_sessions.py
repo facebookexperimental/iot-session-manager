@@ -10,6 +10,7 @@ from settings import ID_SIZE, PIN_SIZE, SESSION_STORAGE
 from src.session_manager import SessionManager
 from session_test_data import example_sessions
 from utils.jwt_helpers import py_jwt_verify
+from utils.storage import load_sessions, save_sessions
 
 # Create session manager instance
 manager = SessionManager()
@@ -26,7 +27,7 @@ def test_load_sessions():
     assert len(manager.sessions) == len(example_sessions)
 
 def test_save_sessions():
-    response = manager._save_sessions()
+    response = save_sessions(manager.sessions)
     assert response
 
 def test_get_session_from_id():
@@ -55,7 +56,12 @@ def test_close_session_fail():
 def test_join_session():
     client_id = 'testClient'
     token = manager.join_session(example_sessions[1]["id"], example_sessions[1]["pin"], client_id)
-    assert token == f'{client_id}:{example_sessions[1]["id"]}'
+    assert token == f'{client_id}'
+
+def test_join_session_client_add():
+    client_id = 'testClient'
+    token = manager.join_session(example_sessions[1]["id"], example_sessions[1]["pin"], client_id)
+    assert manager._get_session_from_id(example_sessions[1]["id"]).clients[0]== client_id
 
 def test_join_session_bad_pin():
     token = manager.join_session(example_sessions[1]["id"], 000, 'testClient')

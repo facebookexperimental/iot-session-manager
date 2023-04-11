@@ -42,8 +42,10 @@ ALLOWED_HOSTS = ['127.0.0.1','localhost'] # used by the example auth decorator
 ID_SIZE = 6
 PIN_SIZE = 3
 
-# Session storage will be written to a disk file of the name below.
+# Session storage will be written to a file named SESSION_STORAGE. If S3_BUCKET variable is set, S3 will be used for storage.
 SESSION_STORAGE = 'session_data.json'
+S3_BUCKET = os.environ.get('S3_BUCKET')
+S3_DATA_ROOT = '/session_manager/'
 
 
 # MQTT JWT authentication setup

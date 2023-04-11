@@ -34,7 +34,19 @@ The tokens vary depending on the deployment mode of the application:
         - The boto3_helpers file handles this implementation.
 """
 
-def create_session_token_payload(session_id, client_id):
+def create_server_token(hostname):
+    issued = math.floor(time.time())
+    expiration = round(issued + timedelta(days=1).total_seconds())
+    acl_payload = {
+        "sub": hostname, # This client_id must match what the device uses as the mqtt username
+        "iat": issued,
+        "exp": expiration,
+        "subs": [f"#"], # Clients are restricted to communicating within their sessions topic.
+        "publ": [f"#"],
+    }
+    return sign_token(acl_payload)
+
+def create_session_token(session_id, client_id):
     issued = math.floor(time.time())
     expiration = round(issued + timedelta(days=1).total_seconds())
     acl_payload = {
@@ -44,15 +56,14 @@ def create_session_token_payload(session_id, client_id):
         "subs": [f"/{session_id}/#"], # Clients are restricted to communicating within their sessions topic.
         "publ": [f"/{session_id}/#"],
     }
-    return acl_payload
+    return sign_token(acl_payload)
 
 # Create session token based on the mode set from settings and environment variables during deployment
-def create_session_token(session_id, client_id):
-    acl_payload = create_session_token_payload(session_id, client_id)
+def sign_token(acl_payload):
     if settings.JWT_MODE == 'dev_jwt_auth':
         return py_jwt_sign(acl_payload)
     elif settings.JWT_MODE == 'dev_no_auth':
-        return f'{client_id}:{session_id}'
+        return f'{acl_payload.get("sub")}'
     elif settings.JWT_MODE == 'kms_jwt_auth':
         return kms_jwt_sign(acl_payload)
 

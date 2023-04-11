@@ -30,8 +30,8 @@ BASE_API = [
 ]
 
 class DefaultConductor():
-    def __init__(self, session_id):
-        self.session_id = session_id
+    def __init__(self, session):
+        self.session_id = session.id
         self.request_api = BASE_API
         self.request_handlers = {
             "state" : self.get_state,

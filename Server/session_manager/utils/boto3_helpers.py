@@ -54,3 +54,21 @@ def kms_verify_token(token):
     valid = response.get('SignatureValid')
     logger.info(f'[KMS] Token Verified: {valid}')
     return valid
+
+
+def save_s3_file(file_path, data):
+    s3 = boto3.client('s3')
+    s3.put_object(
+     Body=data,
+     Bucket=settings.S3_BUCKET,
+     Key= settings.S3_DATA_ROOT + file_path
+)
+
+
+def load_s3_file(file_path):
+    s3 = boto3.client('s3')
+    obj = s3.get_object(
+        Bucket=settings.S3_BUCKET,
+        Key=settings.S3_DATA_ROOT + file_path)
+    file_content = obj['Body'].read().decode('utf-8')
+    return json.loads(file_content)

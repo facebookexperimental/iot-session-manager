@@ -65,7 +65,7 @@ class TestIoTApp(AsyncHTTPTestCase):
         response = self.fetch(f'/api/joinSession', method="POST", body=json.dumps(body_data))
         data = json.loads(response.body)
         self.assertEqual(response.code, 200)
-        self.assertEqual(data["token"], f'{client_id}:{session_id}')
+        self.assertEqual(data["token"], f'{client_id}')
 
     def test_joinSessionNoPin(self):
         manager = SessionManager()
