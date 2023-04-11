@@ -10,6 +10,7 @@ from src.http_server import (
     start_admin_async_server,
     start_iot_async_server,
 )
+from src.async_mqtt_client import AsyncIotClient
 
 """
 Main Application Entrypoint:
@@ -25,7 +26,8 @@ async def main():
     await asyncio.gather(
         start_iot_async_server(),
         start_admin_async_server(),
-        main_loop()
+        main_loop(),
+        AsyncIotClient().run()
     )
 
 

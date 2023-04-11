@@ -1,6 +1,7 @@
 
 pytest
 tornado
+asyncio-mqtt
 
 # Needed for dev_jwt_auth
 pyjwt
