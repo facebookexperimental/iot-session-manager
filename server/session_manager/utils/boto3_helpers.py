@@ -57,12 +57,16 @@ def kms_verify_token(token):
 
 
 def save_s3_file(file_path, data):
-    s3 = boto3.client('s3')
-    s3.put_object(
-     Body=data,
-     Bucket=settings.S3_BUCKET,
-     Key= settings.S3_DATA_ROOT + file_path
-    )
+    try:
+        s3 = boto3.client('s3')
+        s3.put_object(
+        Body=data,
+        Bucket=settings.S3_BUCKET,
+        Key= settings.S3_DATA_ROOT + file_path
+        )
+    except Exception as e:
+        logger.error(f'Failed to save file to s3 {file_path}: {e}')
+        return {}
 
 
 def load_s3_file(file_path):
@@ -74,5 +78,5 @@ def load_s3_file(file_path):
         file_content = obj['Body'].read().decode('utf-8')
         return json.loads(file_content)
     except Exception as e:
-        logger.error(f'Failed to load file {file_path}: {e}')
+        logger.error(f'Failed to load file from s3 {file_path}: {e}')
         return {}
