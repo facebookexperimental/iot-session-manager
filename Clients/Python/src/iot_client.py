@@ -26,7 +26,8 @@ class IotClient():
         self.connected = False
         self.subscriptions = {}
         self._client_id = config.get('client_id')
-        self._client = mqtt.Client(client_id="", transport="TCP")
+        self._client = mqtt.Client(client_id=self._client_id, transport="websockets")
+        self._client.tls_set()
         self._client.on_connect = self._on_connect
         self._client.on_message = self._on_message
         self._client.on_publish = self._on_publish

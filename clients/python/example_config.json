@@ -1,6 +1,6 @@
 {
-    "server_url": "localhost:50000",
-    "auth_url": "localhost:80/api/joinSession",
+    "server_url": "http://localhost:50000",
+    "auth_url": "http://localhost:80/api/joinSession",
     "broker_ip": "localhost",
     "broker_port": 1883,
     "client_id": "servertestclient1"

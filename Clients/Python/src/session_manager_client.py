@@ -19,17 +19,17 @@ class SessionManagerClient():
         self._config = config
 
     def create_session(self):
-        response = requests.get(f'https://{self._config["server_url"]}/api/createSession?type=default')
+        response = requests.get(f'{self._config["server_url"]}/api/createSession?type=default')
         print(response.content)
         session_data = response.json()
         return session_data
 
     def close_session(self, session_id):
-        response = requests.get(f'https://{self._config["server_url"]}/api/closeSession?id={session_id}')
+        response = requests.get(f'{self._config["server_url"]}/api/closeSession?id={session_id}')
         success = response.json()
         return success
 
     def conductor_request(self, session_id, method, params):
-        response = requests.get(f'https://{self._config["server_url"]}/api/closeSession?id={session_id}&method={method}&params={params}')
+        response = requests.get(f'{self._config["server_url"]}/api/closeSession?id={session_id}&method={method}&params={params}')
         response = response.json()
         return response
