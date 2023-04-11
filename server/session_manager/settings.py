@@ -12,6 +12,7 @@ to be configured during deployment from env variables provided by docker.
 
 import logging
 import os
+import json
 from logging.handlers import TimedRotatingFileHandler
 
 # BASE PATH can be set from enviornment variables if the app is run from a different directory than source
@@ -45,7 +46,7 @@ PIN_SIZE = 3
 # Session storage will be written to a file named SESSION_STORAGE. If S3_BUCKET variable is set, S3 will be used for storage.
 SESSION_STORAGE = 'session_data.json'
 S3_BUCKET = os.environ.get('S3_BUCKET')
-S3_DATA_ROOT = '/session_manager/'
+S3_DATA_ROOT = 'session_manager/'
 
 
 # MQTT JWT authentication setup

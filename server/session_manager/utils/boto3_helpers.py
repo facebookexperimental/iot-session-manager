@@ -62,13 +62,17 @@ def save_s3_file(file_path, data):
      Body=data,
      Bucket=settings.S3_BUCKET,
      Key= settings.S3_DATA_ROOT + file_path
-)
+    )
 
 
 def load_s3_file(file_path):
-    s3 = boto3.client('s3')
-    obj = s3.get_object(
-        Bucket=settings.S3_BUCKET,
-        Key=settings.S3_DATA_ROOT + file_path)
-    file_content = obj['Body'].read().decode('utf-8')
-    return json.loads(file_content)
+    try:
+        s3 = boto3.client('s3')
+        obj = s3.get_object(
+            Bucket=settings.S3_BUCKET,
+            Key=settings.S3_DATA_ROOT + file_path)
+        file_content = obj['Body'].read().decode('utf-8')
+        return json.loads(file_content)
+    except Exception as e:
+        logger.error(f'Failed to load file {file_path}: {e}')
+        return {}
