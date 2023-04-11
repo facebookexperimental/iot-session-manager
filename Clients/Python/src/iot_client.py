@@ -55,7 +55,7 @@ class IotClient():
         logger.info({"publishing": None, "published_rc": rc})
         pass
 
-    def join_session(self,session_id: int, session_pin: int):
+    def join_session(self,session_id, session_pin):
         logger.info(f'Attempting to connect with {session_id} and {session_pin}')
         self.session_id = session_id
         body_data = {
@@ -63,7 +63,7 @@ class IotClient():
             "pin":session_pin,
             "client": self._client_id
         }
-        response = requests.post(f'https://{self.config["auth_url"]}',json=body_data)
+        response = requests.post(f'{self.config["auth_url"]}',json=body_data)
         try:
             data = response.json()
             logger.info(f"Recieved token {data['token']}")
