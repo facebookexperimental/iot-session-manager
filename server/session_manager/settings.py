@@ -36,7 +36,6 @@ if os.environ.get("FILE_LOGGING"):
 # Tornado app port setup. The IoT and Admin servers utilized differnet ports to enable separate access permissions
 IOT_PORT = 8888
 ADMIN_PORT = 50001
-ALLOWED_HOSTS = ['127.0.0.1','localhost'] # used by the example auth decorator
 
 # Session Manager settings
 # configures the number of digits in the session ID and PIN to balance usability and security.

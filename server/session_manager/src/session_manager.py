@@ -10,7 +10,7 @@ from random import randint
 from src.session import Session
 from settings import ID_SIZE, PIN_SIZE, SESSION_STORAGE
 from utils.jwt_helpers import create_session_token
-from utils.storage import load_sessions, save_sessions
+from utils.storage import load_sessions_file, save_sessions
 
 logger = logging.getLogger()
 
@@ -86,12 +86,12 @@ class SessionManager():
     def load_sessions(self, data=None):
         if not data:
             logger.info("Session Manager loading sessions from file")
-            session_data = load_sessions()
+            session_data = load_sessions_file()
         else:
             logger.info("Session Manager loading sessions from data")
             session_data = data
         for session in session_data:
-            new_session = Session(session["id"], session["pin"], session["type"])
+            new_session = Session(session_data[session]["id"], session_data[session]["pin"], session_data[session]["type"])
             self.sessions[new_session.id] = new_session
 
     def clear_sesssions(self):

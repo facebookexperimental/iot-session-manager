@@ -10,7 +10,7 @@ import logging
 import tornado.web
 
 from src.session_manager import SessionManager
-from settings import IOT_PORT, ADMIN_PORT, ALLOWED_HOSTS
+from settings import IOT_PORT, ADMIN_PORT
 
 
 """
@@ -53,16 +53,16 @@ async def start_admin_async_server():
     await asyncio.Event().wait()
 
 # Custom Decorator Authentication
-# An example of how this could work to restrict to the allowed hosts is below
+# An example of how this could work to restrict access based on the request
 def example_auth_decorator(func):
     def wrapper_decorator(*args, **kwargs):
         request = args[0].request
-        host = request.headers.get('Host')
-        if host.split(':')[0] in ALLOWED_HOSTS:
+        # Do something with request
+        if request:
             value = func(*args, **kwargs)
             return value
         else:
-            logger.warn(f'Error: Recieved request from unallowed host {host}')
+            logger.warn(f'Error: Request rejected from auth decorator')
     return wrapper_decorator
 
 
@@ -91,7 +91,6 @@ class CreateSessionHandler(tornado.web.RequestHandler):
         -success: string - Success or Error message
 """
 class CloseSessionHandler(tornado.web.RequestHandler):
-    @example_auth_decorator
     def get(self):
         session_id = self.get_argument('id')
         closed= manager.close_session(session_id)
@@ -108,7 +107,6 @@ class CloseSessionHandler(tornado.web.RequestHandler):
         -response: string - json encoded response dictionary returned from the conductor
 """
 class ConductorRequestHandler(tornado.web.RequestHandler):
-    @example_auth_decorator
     def get(self):
         session_id = self.get_argument('id')
         method = self.get_argument('method')
@@ -153,8 +151,12 @@ async def start_iot_async_server():
 class JoinSessionHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Headers", "content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    def options(self, *args):
+        self.set_status(204)
+        self.finish()
 
     def post(self):
         try:

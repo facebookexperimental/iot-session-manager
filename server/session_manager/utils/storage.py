@@ -13,7 +13,7 @@ logger = logging.getLogger()
 
 # Session specific storage helpers
 
-def load_sessions():
+def load_sessions_file():
     if settings.S3_BUCKET:
         return load_s3_file(settings.SESSION_STORAGE)
     else:
@@ -31,16 +31,18 @@ def save_sessions(sessions):
 
 def load_from_local_file(file_path)->dict:
     try:
-        with open(file_path, "w+") as readfile:
+        with open(file_path) as readfile:
             txt = readfile.read()
-        return json.loads(txt)
+            logger.info(f"Read session data text {txt}")
+            return json.loads(txt)
 
-    except Exception:
-        logger.info('Could not load sessions from file')
+    except Exception as e:
+        logger.info(f'Could not load sessions from local file: {file_path}:{e}')
         return {}
 
 def save_local_file(file_path, data)->bool:
     try:
+        logger.info('Saving local file')
         with open(file_path, "w+") as outfile:
             outfile.write(data)
             return True

@@ -9,7 +9,7 @@ from tornado.testing import AsyncHTTPTestCase
 
 from src.session_manager import SessionManager
 from src.http_server import make_admin_app, make_iot_app
-from session_test_data import example_sessions
+from session_test_data import example_session_data, example_sessions
 
 class TestAdminApp(AsyncHTTPTestCase):
     def get_app(self):
@@ -31,7 +31,7 @@ class TestAdminApp(AsyncHTTPTestCase):
 
     def test_close_session(self):
         manager = SessionManager()
-        manager.load_sessions(data=example_sessions)
+        manager.load_sessions(data=example_session_data)
         session_id = example_sessions[1]["id"]
         response = self.fetch(f'/api/closeSession?id={session_id}')
         data = json.loads(response.body)
@@ -40,7 +40,7 @@ class TestAdminApp(AsyncHTTPTestCase):
 
     def test_http_conductor_request_no_params(self):
         manager = SessionManager()
-        manager.load_sessions(data=example_sessions)
+        manager.load_sessions(data=example_session_data)
         session_id = example_sessions[1]["id"]
         response = self.fetch(f'/api/conductorRequest?id={session_id}&method=start')
         data = json.loads(response.body)
@@ -53,7 +53,7 @@ class TestIoTApp(AsyncHTTPTestCase):
 
     def test_joinSession(self):
         manager = SessionManager()
-        manager.load_sessions(data=example_sessions)
+        manager.load_sessions(data=example_session_data)
         session_id = example_sessions[1]["id"]
         session_pin = example_sessions[1]["pin"]
         client_id = 'testClient'
@@ -69,7 +69,7 @@ class TestIoTApp(AsyncHTTPTestCase):
 
     def test_joinSessionNoPin(self):
         manager = SessionManager()
-        manager.load_sessions(data=example_sessions)
+        manager.load_sessions(data=example_session_data)
         session_id = example_sessions[1]["id"]
         session_pin = example_sessions[1]["pin"]
         client_id = 'testClient'

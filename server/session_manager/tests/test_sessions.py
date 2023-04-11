@@ -8,9 +8,9 @@ import pytest
 
 from settings import ID_SIZE, PIN_SIZE, SESSION_STORAGE
 from src.session_manager import SessionManager
-from session_test_data import example_sessions
+from session_test_data import example_sessions, example_session_data
 from utils.jwt_helpers import py_jwt_verify
-from utils.storage import load_sessions, save_sessions
+from utils.storage import load_sessions_file, save_sessions
 
 # Create session manager instance
 manager = SessionManager()
@@ -20,7 +20,7 @@ manager.clear_sesssions()
 @pytest.fixture(autouse=True)
 def setup_session_data():
     manager.clear_sesssions()
-    manager.load_sessions(data=example_sessions)
+    manager.load_sessions(data=example_session_data)
 
 
 def test_load_sessions():

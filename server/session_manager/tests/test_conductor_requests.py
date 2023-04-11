@@ -7,7 +7,7 @@ import pytest
 
 from src.session_manager import SessionManager
 from settings import SESSION_STORAGE
-from session_test_data import example_sessions
+from session_test_data import example_sessions, example_session_data
 
 # Create session manager
 manager = SessionManager()
@@ -16,7 +16,7 @@ manager = SessionManager()
 @pytest.fixture(autouse=True)
 def setup_session_data():
     manager.clear_sesssions()
-    manager.load_sessions(data=example_sessions)
+    manager.load_sessions(data=example_session_data)
 
 def test_state_request():
     result = manager.session_conductor_request(example_sessions[0]["id"],method='state',params='d')
