@@ -33,7 +33,6 @@ def load_from_local_file(file_path)->dict:
     try:
         with open(file_path) as readfile:
             txt = readfile.read()
-            logger.info(f"Read session data text {txt}")
             return json.loads(txt)
 
     except Exception as e:
